@@ -10,7 +10,7 @@ WAKE_POS_FILE = "positions wake.txt"
 
 Vinf = 19.515
 Pinf = 906.11
-aoa = 54
+aoa = 25
 
 data = load_data(FILE_PATH)
 # print(data)
