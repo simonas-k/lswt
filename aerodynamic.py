@@ -10,7 +10,7 @@ WAKE_POS_FILE = "positions wake.txt"
 
 Vinf = 19.515
 Pinf = 906.11
-aoa = 25
+aoa = 15
 
 data = load_data(FILE_PATH)
 # print(data)
@@ -40,15 +40,18 @@ cn = cumulative_trapezoid(Cp_diff, x_data, initial=0)
 cn_final = cn[-1]
 print("cn",cn_final)
 
-#drag
-C_pt_wake_new = np.interp(x_data, wake_positions, C_pt_wake)
-print(C_pt_wake_new)
-integrand = np.sqrt(C_pt_wake_new) * (1 - np.sqrt(C_pt_wake_new))
-# print(integrand)
-cd_calc = cumulative_trapezoid(integrand,x_data,initial=0)
-cd = cd_calc[-1]
-print("cd", cd)
 
 cl = cn_final * (np.cos(np.radians(alpha))+(np.sin(np.radians(alpha)))**2 / np.cos(np.radians(alpha))-cd*np.tan(np.radians(alpha)))
 print(cl)
 print("lift to drag", cl/cd)
+
+
+
+# #drag
+# C_pt_wake_new = np.interp(x_data, wake_positions, C_pt_wake)
+# print(C_pt_wake_new)
+# integrand = np.sqrt(C_pt_wake_new) * (1 - np.sqrt(C_pt_wake_new))
+# # print(integrand)
+# cd_calc = cumulative_trapezoid(integrand,x_data,initial=0)
+# cd = cd_calc[-1]
+# print("cd", cd)
