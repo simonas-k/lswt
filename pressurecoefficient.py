@@ -29,9 +29,7 @@ def load_data(file_path):
         rho = float(parts[7])           # Air density
         pressures = [float(p) for p in parts[8:57]]
         p097 = float(parts[104+13])
-        # print(p097)
         wake_pressures = [float(p) for p in parts[57:104]]
-        print(wake_pressures)
         data.append((run_nr, alpha, rho, pressures, p097, wake_pressures))
 
     return data
@@ -65,7 +63,7 @@ def calculate_cp(data, selected_run_nr):
             C_pt_wake = [(p - p097) / (0.5 * rho * (Vinf**2)) for p in wake_pressures]
             return C_p, alpha, C_pt_wake
 
-    print(f"No data found for Run_nr {selected_run_nr}")
+    # print(f"No data found for Run_nr {selected_run_nr}")
     return None, None
 
 def plot_cp_profile(positions, C_p, alpha):
@@ -120,26 +118,26 @@ def plot_wake_profile(positions, C_pt_wake, alpha):
     plt.grid(True)
     plt.show()
 
-def main():
-    # Load the data
-    data = load_data(FILE_PATH)
+# def main():
+#     # Load the data
+#     data = load_data(FILE_PATH)
+#
+#     # Load the chordwise positions from the text file
+#     chordwise_positions = load_chordwise_positions(CHORDWISE_POSITIONS_FILE)
+#     wake_positions = load_wake_positions(WAKE_POS_FILE)
+#
+#     # Select run numbers to analyze (change these as needed for different α)
+#     selected_run_nr = 30  # to change alpha
+#
+#     # Calculate Cp
+#     C_p, alpha, C_pt_wake = calculate_cp(data, selected_run_nr)
+#
+#     if C_p is not None:
+#         # Plot the Cp profile using chordwise positions
+#         plot_cp_profile(chordwise_positions, C_p, alpha)
+#
+#     if C_p is not None:
+#         plot_wake_profile(wake_positions, C_pt_wake, alpha)
 
-    # Load the chordwise positions from the text file
-    chordwise_positions = load_chordwise_positions(CHORDWISE_POSITIONS_FILE)
-    wake_positions = load_wake_positions(WAKE_POS_FILE)
-
-    # Select run numbers to analyze (change these as needed for different α)
-    selected_run_nr = 30  # to change alpha
-
-    # Calculate Cp
-    C_p, alpha, C_pt_wake = calculate_cp(data, selected_run_nr)
-
-    if C_p is not None:
-        # Plot the Cp profile using chordwise positions
-        plot_cp_profile(chordwise_positions, C_p, alpha)
-
-    if C_p is not None:
-        plot_wake_profile(wake_positions, C_pt_wake, alpha)
-
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

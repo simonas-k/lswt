@@ -2,17 +2,13 @@ import numpy as np
 from scipy.integrate import quad
 import matplotlib.pyplot as plt
 from scipy.integrate import cumulative_trapezoid
-from pressurecoefficient import load_data, load_chordwise_positions, calculate_cp, plot_cp_profile, load_wake_positions, plot_wake_profile
+from pressurecoefficient import load_data, load_chordwise_positions, calculate_cp, plot_cp_profile
 from scipy.interpolate import CubicSpline
 from coords import process_airfoil, get_slope
 
 FILE_PATH = "raw_raw_2D_retest2.txt"
 CHORDWISE_POSITIONS_FILE = "positions p.txt"  # New text file with x positions
 WAKE_POS_FILE = "positions wake.txt"
-
-Vinf = 19.515
-Pinf = 906.11
-aoa = 15
 
 airfoil_data = np.array([
     [0, 0], [0.35626, 0.77154], [1.33331, 1.60115], [3.66108, 2.87759], [7.2922, 4.15707],
@@ -27,58 +23,57 @@ airfoil_data = np.array([
     [77.67783, -1.61034], [82.07965, -1.28273], [86.47978, -0.94874], [100, 0]
 ])
 
-# Process the airfoil data
-interpolations = process_airfoil(airfoil_data)
+Vinf = 19.515
+Pinf = 906.11
+aoa = 15
 
-data = load_data(FILE_PATH)
-# print(data)
-positions = load_chordwise_positions(CHORDWISE_POSITIONS_FILE)
-wake_positions = load_wake_positions(WAKE_POS_FILE)
-wake_positions = np.array(wake_positions)
-wake_positions = wake_positions / wake_positions[-1]
-print("wake pos", wake_positions)
-C_p, alpha, C_pt_wake = calculate_cp(data, aoa)
-C_p_upper, positions_upper, C_p_lower, positions_lower = plot_cp_profile(positions, C_p, alpha)
+aoa_values = np.arange(10, 50, 1)
 
+alpha_values = []
+cl_values = []
+cd_values = []
+for aoa in aoa_values:
 
-C_p_lower = C_p_lower[::-1]
-positions_lower = positions_lower[::-1]
-positions_lower = np.array(positions_lower)
-positions_lower = positions_lower / 100
-positions_upper = np.array(positions_upper)
-positions_upper = positions_upper / 100
-# print(positions_lower)
-x_data = np.linspace(0, 1, 100)  # x values (0 to 1)
+    # Process the airfoil data
+    interpolations = process_airfoil(airfoil_data)
 
-Cpl_new = np.interp(x_data, positions_lower, C_p_lower)
-Cpu_new = np.interp(x_data, positions_upper, C_p_upper)
-cn = cumulative_trapezoid(Cpl_new - Cpu_new, x_data, initial=0)
-cn_final = cn[-1]
-print("cn",cn_final)
+    data = load_data(FILE_PATH)
+    # print(data)
+    positions = load_chordwise_positions(CHORDWISE_POSITIONS_FILE)
+    C_p, alpha, C_pt_wake = calculate_cp(data, aoa)
+    C_p_upper, positions_upper, C_p_lower, positions_lower = plot_cp_profile(positions, C_p, alpha)
 
 
-# cl = cn_final * (np.cos(np.radians(alpha))+(np.sin(np.radians(alpha)))**2 / np.cos(np.radians(alpha))-cd*np.tan(np.radians(alpha)))
-# print(cl)
-# print("lift to drag", cl/cd)
+    C_p_lower = C_p_lower[::-1]
+    positions_lower = positions_lower[::-1]
+    positions_lower = np.array(positions_lower)
+    positions_lower = positions_lower / 100
+    positions_upper = np.array(positions_upper)
+    positions_upper = positions_upper / 100
+    # print(positions_lower)
+    x_data = np.linspace(0, 1, 100)  # x values (0 to 1)
 
-# Drag
+    Cpl_new = np.interp(x_data, positions_lower, C_p_lower)
+    Cpu_new = np.interp(x_data, positions_upper, C_p_upper)
+    cn_integrand = Cpl_new - Cpu_new
+    cn = cumulative_trapezoid(cn_integrand, x_data, initial=0)
+    cn_final = cn[-1]
 
+    # Compute slopes
+    upper_slopes = get_slope(interpolations, x_data, surface="upper")
+    lower_slopes = get_slope(interpolations, x_data, surface="lower")
 
-# Get the slope at x = 50 on the upper surface
-x_coord = 5
-slope_upper = get_slope(interpolations, x_coord, surface="upper")
-print(f"Slope at x = {x_coord} on the upper surface: {slope_upper}")
+    ca_integrand = Cpu_new*upper_slopes - Cpl_new*lower_slopes
+    ca = cumulative_trapezoid(ca_integrand, x_data, initial=0)
+    ca_final = ca[-1]
 
-# Get the slope at x = 50 on the lower surface
-slope_lower = get_slope(interpolations, x_coord, surface="lower")
-print(f"Slope at x = {x_coord} on the lower surface: {slope_lower}")
+    # Calculate cl and cd
+    cl = cn_final * np.cos(np.radians(alpha)) - ca_final * np.sin(np.radians(alpha))
+    cd = ca_final * np.cos(np.radians(alpha)) + cn_final * np.sin(np.radians(alpha))
+    # print("Lift Coefficient =", cl)
+    # print("Drag Coefficient =", cd)
 
+    np.append(alpha_values,alpha)
+    np.append(cl_values,cl)
+    np.append(cd_values,cd)
 
-# #drag
-# C_pt_wake_new = np.interp(x_data, wake_positions, C_pt_wake)
-# print(C_pt_wake_new)
-# integrand = np.sqrt(C_pt_wake_new) * (1 - np.sqrt(C_pt_wake_new))
-# # print(integrand)
-# cd_calc = cumulative_trapezoid(integrand,x_data,initial=0)
-# cd = cd_calc[-1]
-# print("cd", cd)
