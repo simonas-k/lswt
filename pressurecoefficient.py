@@ -83,24 +83,24 @@ def plot_cp_profile(positions, C_p, alpha):
     C_p_lower = C_p_lower[::-1]
 
     # Create the plot
-    plt.figure(figsize=(10, 6))
+    # plt.figure(figsize=(10, 6))
+    #
+    # # Plot the upper surface (blue line)
+    # plt.plot(positions_upper, C_p_upper, marker='o', linestyle='-', color='blue', label='Upper Surface')
+    #
+    # # Plot the lower surface (red line)
+    # plt.plot(positions_lower, C_p_lower, marker='o', linestyle='-', color='red', label='Lower Surface')
 
-    # Plot the upper surface (blue line)
-    plt.plot(positions_upper, C_p_upper, marker='o', linestyle='-', color='blue', label='Upper Surface')
-
-    # Plot the lower surface (red line)
-    plt.plot(positions_lower, C_p_lower, marker='o', linestyle='-', color='red', label='Lower Surface')
-
-    # Ensure the y-axis is inverted for aerodynamic convention
-    plt.gca().invert_yaxis()
-
-    # Add labels, title, grid, and legend
-    plt.xlabel('Chordwise Position (%)')
-    plt.ylabel('Pressure Coefficient (Cp)')
-    plt.title(f'Pressure Coefficient Profile for α = {alpha}°')
-    plt.grid(True)
-    plt.legend()
-    plt.show()
+    # # Ensure the y-axis is inverted for aerodynamic convention
+    # plt.gca().invert_yaxis()
+    #
+    # # Add labels, title, grid, and legend
+    # plt.xlabel('Chordwise Position (%)')
+    # plt.ylabel('Pressure Coefficient (Cp)')
+    # plt.title(f'Pressure Coefficient Profile for α = {alpha}°')
+    # plt.grid(True)
+    # plt.legend()
+    # plt.show()
 
     return C_p_upper, positions_upper, C_p_lower, positions_lower
 

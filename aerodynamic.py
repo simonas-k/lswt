@@ -73,7 +73,33 @@ for aoa in aoa_values:
     # print("Lift Coefficient =", cl)
     # print("Drag Coefficient =", cd)
 
-    np.append(alpha_values,alpha)
-    np.append(cl_values,cl)
-    np.append(cd_values,cd)
+    alpha_values.append(alpha)
+    cl_values.append(cl)
+    cd_values.append(cd)
 
+print(alpha_values)
+
+# Plotting Cl and Cd
+plt.figure(figsize=(12, 6))
+
+# Plot Cl vs Alpha
+plt.subplot(1, 2, 1)
+plt.plot(alpha_values, cl_values, marker='o', color='b', label='Cl')
+plt.xlabel("Angle of Attack (Alpha)")
+plt.ylabel("Lift Coefficient (Cl)")
+plt.title("Lift Coefficient vs Angle of Attack")
+plt.grid(True)
+plt.legend()
+
+# Plot Cd vs Alpha
+plt.subplot(1, 2, 2)
+plt.plot(alpha_values, cd_values, marker='o', color='r', label='Cd')
+plt.xlabel("Angle of Attack (Alpha)")
+plt.ylabel("Drag Coefficient (Cd)")
+plt.title("Drag Coefficient vs Angle of Attack")
+plt.grid(True)
+plt.legend()
+
+# Display the plots
+plt.tight_layout()
+plt.show()
