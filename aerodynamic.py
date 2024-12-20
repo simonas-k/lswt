@@ -27,15 +27,23 @@ Vinf = 19.515
 Pinf = 906.11
 aoa = 15
 
-aoa_values = np.arange(10, 50, 1)
+# Process the airfoil data
+interpolations = process_airfoil(airfoil_data)
+# Compute slopes
+x_data = np.linspace(0, 1, 100)
+
+upper_slopes = get_slope(interpolations, x_data*160, surface="upper")
+lower_slopes = get_slope(interpolations, x_data*160, surface="lower")
+
+aoa_values = np.arange(1, 50, 1)
 
 alpha_values = []
 cl_values = []
 cd_values = []
+
 for aoa in aoa_values:
 
-    # Process the airfoil data
-    interpolations = process_airfoil(airfoil_data)
+
 
     data = load_data(FILE_PATH)
     # print(data)
@@ -51,17 +59,13 @@ for aoa in aoa_values:
     positions_upper = np.array(positions_upper)
     positions_upper = positions_upper / 100
     # print(positions_lower)
-    x_data = np.linspace(0, 1, 100)  # x values (0 to 1)
+      # x values (0 to 1)
 
     Cpl_new = np.interp(x_data, positions_lower, C_p_lower)
     Cpu_new = np.interp(x_data, positions_upper, C_p_upper)
     cn_integrand = Cpl_new - Cpu_new
     cn = cumulative_trapezoid(cn_integrand, x_data, initial=0)
     cn_final = cn[-1]
-
-    # Compute slopes
-    upper_slopes = get_slope(interpolations, x_data, surface="upper")
-    lower_slopes = get_slope(interpolations, x_data, surface="lower")
 
     ca_integrand = Cpu_new*upper_slopes - Cpl_new*lower_slopes
     ca = cumulative_trapezoid(ca_integrand, x_data, initial=0)
@@ -77,8 +81,6 @@ for aoa in aoa_values:
     cl_values.append(cl)
     cd_values.append(cd)
 
-print(alpha_values)
-
 # Plotting Cl and Cd
 plt.figure(figsize=(12, 6))
 
@@ -91,15 +93,30 @@ plt.title("Lift Coefficient vs Angle of Attack")
 plt.grid(True)
 plt.legend()
 
-# Plot Cd vs Alpha
+# Plot Cd vs Cl (Drag Bucket)
 plt.subplot(1, 2, 2)
-plt.plot(alpha_values, cd_values, marker='o', color='r', label='Cd')
-plt.xlabel("Angle of Attack (Alpha)")
+plt.plot(cl_values, cd_values, marker='o', color='purple', label='Drag Bucket')
+plt.xlabel("Lift Coefficient (Cl)")
 plt.ylabel("Drag Coefficient (Cd)")
-plt.title("Drag Coefficient vs Angle of Attack")
+plt.title("Drag Coefficient vs Lift Coefficient (Drag Bucket)")
 plt.grid(True)
 plt.legend()
 
-# Display the plots
 plt.tight_layout()
 plt.show()
+
+
+# airfoil_data = np.linspace(0,160,100)
+# upper_surface = interpolations["upper"](airfoil_data)
+# lower_surface = interpolations["lower"](airfoil_data)
+#
+# plt.figure(figsize=(10, 5))
+# plt.plot(x_data, upper_surface, label='Upper Surface', color='blue')
+# plt.plot(x_data, lower_surface, label='Lower Surface', color='red')
+# plt.axhline(0, color='black', linestyle='--', linewidth=0.5)  # Indicate the chord line
+# plt.title("Interpolated Airfoil Shape")
+# plt.xlabel("Chordwise Position (x/c)")
+# plt.ylabel("Thickness / Camber")
+# plt.legend()
+# plt.grid(True)
+# plt.show()
