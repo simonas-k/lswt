@@ -105,7 +105,6 @@ plt.legend()
 plt.tight_layout()
 plt.show()
 
-
 # airfoil_data = np.linspace(0,160,100)
 # upper_surface = interpolations["upper"](airfoil_data)
 # lower_surface = interpolations["lower"](airfoil_data)
