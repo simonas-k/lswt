@@ -35,7 +35,7 @@ x_data = np.linspace(0, 1, 100)
 upper_slopes = get_slope(interpolations, x_data*160, surface="upper")
 lower_slopes = get_slope(interpolations, x_data*160, surface="lower")
 
-aoa_values = np.arange(1, 50, 1)
+aoa_values = np.arange(1, 55, 1)
 
 alpha_values = []
 cl_values = []
