@@ -100,8 +100,8 @@ def plot_cp_profile(positions, C_p, alpha):
     plt.title(f'Pressure Coefficient Profile for α = {alpha}°')
     plt.grid(True)
     plt.legend()
-    plt.show()
     plt.savefig(f'cp_{alpha}.pdf')
+    plt.show()
 
     return C_p_upper, positions_upper, C_p_lower, positions_lower
 
