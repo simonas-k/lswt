@@ -82,6 +82,9 @@ def plot_cp_profile(positions, C_p, alpha):
     positions_lower = positions_lower[::-1]
     C_p_lower = C_p_lower[::-1]
 
+
+    # UNCOMMENT THE FOLLOWING TO CREATE PLOTS:
+
     # Create the plot
     # plt.figure(figsize=(10, 6))
 
