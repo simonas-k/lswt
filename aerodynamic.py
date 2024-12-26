@@ -65,7 +65,7 @@ for aoa in aoa_values:
     Cpu_new = np.interp(x_data, positions_upper, C_p_upper)
     cn_integrand = Cpl_new - Cpu_new
     cn = cumulative_trapezoid(cn_integrand, x_data, initial=0)
-    cn_final = cn[-1]
+    cn_final =  cn[-1]
 
     ca_integrand = Cpu_new*upper_slopes - Cpl_new*lower_slopes
     ca = cumulative_trapezoid(ca_integrand, x_data, initial=0)
@@ -87,8 +87,8 @@ plt.figure(figsize=(12, 6))
 # Plot Cl vs Alpha
 plt.subplot(1, 2, 1)
 plt.plot(alpha_values, cl_values, marker='o', color='b', label='Cl')
-plt.xlabel("Angle of Attack (Alpha)")
-plt.ylabel("Lift Coefficient (Cl)")
+plt.xlabel("Angle of Attack ($\\alpha$)")
+plt.ylabel("Lift Coefficient ($C_l$)")
 plt.title("Lift Coefficient vs Angle of Attack")
 plt.grid(True)
 plt.legend()
@@ -96,13 +96,14 @@ plt.legend()
 # Plot Cd vs Cl (Drag Bucket)
 plt.subplot(1, 2, 2)
 plt.plot(cl_values, cd_values, marker='o', color='purple', label='Drag Bucket')
-plt.xlabel("Lift Coefficient (Cl)")
-plt.ylabel("Drag Coefficient (Cd)")
+plt.xlabel("Lift Coefficient ($C_l$)")
+plt.ylabel("Drag Coefficient ($C_d$)")
 plt.title("Drag Coefficient vs Lift Coefficient (Drag Bucket)")
 plt.grid(True)
 plt.legend()
 
 plt.tight_layout()
+plt.savefig("plot.pdf")
 plt.show()
 
 # airfoil_data = np.linspace(0,160,100)
