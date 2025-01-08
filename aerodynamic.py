@@ -6,6 +6,8 @@ from pressurecoefficient import load_data, load_chordwise_positions, calculate_c
 from scipy.interpolate import CubicSpline
 from coords import process_airfoil, get_slope
 
+
+
 FILE_PATH = "raw_raw_2D_retest2.txt"
 CHORDWISE_POSITIONS_FILE = "positions p.txt"  # New text file with x positions
 WAKE_POS_FILE = "positions wake.txt"
@@ -34,6 +36,9 @@ x_data = np.linspace(0, 1, 100)
 
 upper_slopes = get_slope(interpolations, x_data*160, surface="upper")
 lower_slopes = get_slope(interpolations, x_data*160, surface="lower")
+
+print(upper_slopes)
+print(lower_slopes)
 
 aoa_values = np.arange(1, 55, 1)
 
@@ -73,6 +78,7 @@ for aoa in aoa_values:
     cm = cumulative_trapezoid(cm_integrand, x_data, initial=0)
     cm_final = cm[-1]
 
+
     ca_integrand = Cpu_new*upper_slopes - Cpl_new*lower_slopes
     ca = cumulative_trapezoid(ca_integrand, x_data, initial=0)
     ca_final = ca[-1]
@@ -99,7 +105,7 @@ plt.figure()
 plt.plot(alpha_values, cl_values, marker='o', color='b', label='Cl')
 plt.xlabel("Angle of Attack ($\\alpha$)")
 plt.ylabel("Lift Coefficient ($C_l$)")
-plt.title("Lift Coefficient vs Angle of Attack")
+plt.title("Airfoil Lift Coefficient vs Angle of Attack")
 plt.grid(True)
 plt.legend()
 plt.savefig("Cl_vs_Alpha.pdf")
@@ -107,34 +113,34 @@ plt.close()
 
 # Plot 2: Cd vs Cl (Drag Bucket)
 plt.figure()
-plt.plot(cl_values, cd_values, marker='o', color='purple', label='Drag Bucket')
-plt.xlabel("Lift Coefficient ($C_l$)")
-plt.ylabel("Drag Coefficient ($C_d$)")
-plt.title("Drag Coefficient vs Lift Coefficient (Drag Bucket)")
+plt.plot(cd_values, cl_values, marker='o', color='purple', label='Drag Bucket')
+plt.xlabel("Drag Coefficient ($C_l$)")
+plt.ylabel("Lift Coefficient ($C_d$)")
+plt.title("Lift Coefficient vs Drag Coefficient (Drag Bucket)")
 plt.grid(True)
 plt.legend()
-plt.savefig("Cd_vs_Cl.pdf")
+plt.savefig("Cl_vs_Cd.pdf")
 plt.close()
 
 # Plot 3: Cm vs Cl
 plt.figure()
-plt.plot(cl_values, cm_values, marker='o', color='purple', label='Moment Coefficient')
-plt.xlabel("Lift Coefficient ($C_l$)")
+plt.plot(alpha_values, cm_values, marker='o', color='r', label='Moment Coefficient')
+plt.xlabel("Angle of Attack ($\\alpha$)")
 plt.ylabel("Moment Coefficient ($C_m$)")
-plt.title("Moment Coefficient vs Lift Coefficient")
+plt.title("Moment Coefficient vs Angle of Attack")
 plt.grid(True)
 plt.legend()
-plt.savefig("Cm_vs_Cl.pdf")
+plt.savefig("Cm_vs_AoA.pdf")
 plt.close()
 
 # Plot 4: xcop vs Alpha
 plt.figure()
-plt.plot(alpha_values, xcop_values, marker='o', color='purple', label='$x_{cop}$ values')
+plt.plot(alpha_values, xcop_values, marker='o', color='g', label='$x_{cop}$ values')
 plt.xlabel("Angle of Attack ($\\alpha$)")
 plt.ylabel("XCoP values ($x$)")
 plt.title("$x_{cop}$ values (m)")
 plt.grid(True)
-plt.legend()
+# plt.legend()
 plt.savefig("XCoP_vs_Alpha.pdf")
 plt.close()
 
@@ -152,3 +158,5 @@ plt.close()
 # plt.legend()
 # plt.grid(True)
 # plt.show()
+
+print(upper_slopes)
