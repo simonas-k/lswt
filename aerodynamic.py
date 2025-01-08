@@ -40,6 +40,8 @@ aoa_values = np.arange(1, 55, 1)
 alpha_values = []
 cl_values = []
 cd_values = []
+cm_values = []
+xcop_values = []
 
 for aoa in aoa_values:
 
@@ -67,9 +69,15 @@ for aoa in aoa_values:
     cn = cumulative_trapezoid(cn_integrand, x_data, initial=0)
     cn_final =  cn[-1]
 
+    cm_integrand = (Cpu_new - Cpl_new) * x_data
+    cm = cumulative_trapezoid(cm_integrand, x_data, initial=0)
+    cm_final = cm[-1]
+
     ca_integrand = Cpu_new*upper_slopes - Cpl_new*lower_slopes
     ca = cumulative_trapezoid(ca_integrand, x_data, initial=0)
     ca_final = ca[-1]
+
+    x_cop = cm_final / cn_final * 0.16
 
     # Calculate cl and cd
     cl = cn_final * np.cos(np.radians(alpha)) - ca_final * np.sin(np.radians(alpha))
@@ -80,31 +88,55 @@ for aoa in aoa_values:
     alpha_values.append(alpha)
     cl_values.append(cl)
     cd_values.append(cd)
+    cm_values.append(cm_final)
+    xcop_values.append(x_cop)
 
 # Plotting Cl and Cd
 plt.figure(figsize=(12, 6))
 
-# Plot Cl vs Alpha
-plt.subplot(1, 2, 1)
+# Plot 1: Cl vs Alpha
+plt.figure()
 plt.plot(alpha_values, cl_values, marker='o', color='b', label='Cl')
 plt.xlabel("Angle of Attack ($\\alpha$)")
 plt.ylabel("Lift Coefficient ($C_l$)")
 plt.title("Lift Coefficient vs Angle of Attack")
 plt.grid(True)
 plt.legend()
+plt.savefig("Cl_vs_Alpha.pdf")
+plt.close()
 
-# Plot Cd vs Cl (Drag Bucket)
-plt.subplot(1, 2, 2)
+# Plot 2: Cd vs Cl (Drag Bucket)
+plt.figure()
 plt.plot(cl_values, cd_values, marker='o', color='purple', label='Drag Bucket')
 plt.xlabel("Lift Coefficient ($C_l$)")
 plt.ylabel("Drag Coefficient ($C_d$)")
 plt.title("Drag Coefficient vs Lift Coefficient (Drag Bucket)")
 plt.grid(True)
 plt.legend()
+plt.savefig("Cd_vs_Cl.pdf")
+plt.close()
 
-plt.tight_layout()
-plt.savefig("plot.pdf")
-plt.show()
+# Plot 3: Cm vs Cl
+plt.figure()
+plt.plot(cl_values, cm_values, marker='o', color='purple', label='Moment Coefficient')
+plt.xlabel("Lift Coefficient ($C_l$)")
+plt.ylabel("Moment Coefficient ($C_m$)")
+plt.title("Moment Coefficient vs Lift Coefficient")
+plt.grid(True)
+plt.legend()
+plt.savefig("Cm_vs_Cl.pdf")
+plt.close()
+
+# Plot 4: xcop vs Alpha
+plt.figure()
+plt.plot(alpha_values, xcop_values, marker='o', color='purple', label='$x_{cop}$ values')
+plt.xlabel("Angle of Attack ($\\alpha$)")
+plt.ylabel("XCoP values ($x$)")
+plt.title("$x_{cop}$ values (m)")
+plt.grid(True)
+plt.legend()
+plt.savefig("XCoP_vs_Alpha.pdf")
+plt.close()
 
 # airfoil_data = np.linspace(0,160,100)
 # upper_surface = interpolations["upper"](airfoil_data)
