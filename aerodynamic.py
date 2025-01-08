@@ -6,8 +6,6 @@ from pressurecoefficient import load_data, load_chordwise_positions, calculate_c
 from scipy.interpolate import CubicSpline
 from coords import process_airfoil, get_slope
 
-
-
 FILE_PATH = "raw_raw_2D_retest2.txt"
 CHORDWISE_POSITIONS_FILE = "positions p.txt"  # New text file with x positions
 WAKE_POS_FILE = "positions wake.txt"
@@ -49,15 +47,10 @@ cm_values = []
 xcop_values = []
 
 for aoa in aoa_values:
-
-
-
     data = load_data(FILE_PATH)
-    # print(data)
     positions = load_chordwise_positions(CHORDWISE_POSITIONS_FILE)
     C_p, alpha, C_pt_wake = calculate_cp(data, aoa)
     C_p_upper, positions_upper, C_p_lower, positions_lower = plot_cp_profile(positions, C_p, alpha)
-
 
     C_p_lower = C_p_lower[::-1]
     positions_lower = positions_lower[::-1]
@@ -65,8 +58,6 @@ for aoa in aoa_values:
     positions_lower = positions_lower / 100
     positions_upper = np.array(positions_upper)
     positions_upper = positions_upper / 100
-    # print(positions_lower)
-      # x values (0 to 1)
 
     Cpl_new = np.interp(x_data, positions_lower, C_p_lower)
     Cpu_new = np.interp(x_data, positions_upper, C_p_upper)
@@ -77,7 +68,6 @@ for aoa in aoa_values:
     cm_integrand = (Cpu_new - Cpl_new) * x_data
     cm = cumulative_trapezoid(cm_integrand, x_data, initial=0)
     cm_final = cm[-1]
-
 
     ca_integrand = Cpu_new*upper_slopes - Cpl_new*lower_slopes
     ca = cumulative_trapezoid(ca_integrand, x_data, initial=0)
@@ -113,14 +103,14 @@ plt.close()
 
 # Plot 2: Cd vs Cl (Drag Bucket)
 plt.figure()
-plt.plot(cd_values, cl_values, marker='o', color='purple', label='Drag Bucket')
-plt.xlabel("Drag Coefficient ($C_l$)")
-plt.ylabel("Lift Coefficient ($C_d$)")
+plt.plot(cl_values, cd_values, marker='o', color='purple', label='Drag Bucket')
+plt.xlabel("Drag Coefficient ($C_d$)")
+plt.ylabel("Lift Coefficient ($C_l$)")
 plt.title("Lift Coefficient vs Drag Coefficient (Drag Bucket)")
 plt.grid(True)
 plt.legend()
 plt.savefig("Cl_vs_Cd.pdf")
-plt.close()
+plt.show()
 
 # Plot 3: Cm vs Cl
 plt.figure()
